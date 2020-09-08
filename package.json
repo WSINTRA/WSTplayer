@@ -1,0 +1,11 @@
+{
+  "name": "torrentplaylist_project_v1",
+  "version": "1.0.0",
+  "description": "A simple web scraper that connects to youtube API and builds a playlist of trailers based on latest movie torrents",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
