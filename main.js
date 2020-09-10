@@ -8,6 +8,8 @@
 //Step 1
 //Create a new puppeteer instance that connects to https://1337x.to/trending/w/movies/
 const puppeteer = require('puppeteer');
+//ptn is a torrent name parse from https://github.com/jzjzjzj/parse-torrent-name
+var ptn = require('parse-torrent-name');
 
 async function run() {
 
@@ -21,21 +23,10 @@ async function run() {
     //Step 2
     //Parse the returning data and find the table that contains the torrent titles
 
-    //     <td class="coll-1 name">
-    // <div class="rating-box" style="padding-top: 2px;">
-    // <span class="active"><i class="flaticon-arw-right grey"></i></span>
-    // <span><i class="flaticon-arw-right"></i></span>
-    // <span class="rating-text" style="margin-top: 2px;">1</span>
-    // <span><i class="flaticon-arw-right"></i></span>
-    // </div>
-    // <a href="/torrent/4611461/Mulan-2020-1080p-WEBRip-x264-AAC5-1-RARBG/">Mulan.2020.1080p.WEBRip.x264.AAC5.1-RARBG</a> </td>
-
     let torrentTable = 'body > main > div > div > div.featured-list.trending-torrent > div.table-list-wrap > table > tbody'
 
     //Step 3
     //Create an array of all unique titles, since many titles will be similar except for the scene tags, filter by the first 4 letters
-
-
     let tableLen = 50;
     let titleArray = []
     for (let i = 0; i < tableLen; i++) {
@@ -46,27 +37,26 @@ async function run() {
             return element ? element.innerText : null;
         }, torrentTitle))
     }
+    titleArray = titleArray.filter(el => el !== null)
+    titleArray = titleArray.map(element => ptn(element))
 
+    uniqeTitles = [...new Set(titleArray.map(el => (el.title + " trailer")))];
     //TEST
-    console.log(titleArray)
+    console.log(uniqeTitles)
 
-
+    //Step 4
+    //Connect to the youTube API with credentials
     browser.close();
+
 }
 
-run()
+run();
 
 
 
-//TEST
 
-//Step 3
-//Create an array of all unique titles, since many titles will be similar except for the scene tags, filter by the first 4 letters
 
-//TEST
 
-//Step 4
-//Connect to the youTube API with credentials
 
 //TEST
 
