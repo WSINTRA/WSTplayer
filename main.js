@@ -10,42 +10,60 @@
 const puppeteer = require('puppeteer');
 //ptn is a torrent name parse from https://github.com/jzjzjzj/parse-torrent-name
 var ptn = require('parse-torrent-name');
+const CREDS = require('./cred');
 
 async function run() {
 
-    const browser = await puppeteer.launch({ headless: true }); // default is true
+    const browser = await puppeteer.launch({ headless: false }); // default is true
     const page = await browser.newPage();
 
-    await page.goto('https://1337x.to/trending/w/movies/');
-    //TEST
-    // await page.screenshot({ path: 'testScreener.png' });
+    // await page.goto('https://1337x.to/trending/w/movies/');
+    // //TEST
+    // // await page.screenshot({ path: 'testScreener.png' });
 
-    //Step 2
-    //Parse the returning data and find the table that contains the torrent titles
+    // //Step 2
+    // //Parse the returning data and find the table that contains the torrent titles
 
-    let torrentTable = 'body > main > div > div > div.featured-list.trending-torrent > div.table-list-wrap > table > tbody'
+    // let torrentTable = 'body > main > div > div > div.featured-list.trending-torrent > div.table-list-wrap > table > tbody'
 
-    //Step 3
-    //Create an array of all unique titles, since many titles will be similar except for the scene tags, filter by the first 4 letters
-    let tableLen = 50;
-    let titleArray = []
-    for (let i = 0; i < tableLen; i++) {
-        let index = i;
-        let torrentTitle = `body > main > div > div > div.featured-list.trending-torrent > div.table-list-wrap > table > tbody > tr:nth-child(${index}) > td.coll-1.name > a`
-        titleArray.push(await page.evaluate((sel) => {
-            let element = document.querySelector(sel);
-            return element ? element.innerText : null;
-        }, torrentTitle))
-    }
-    titleArray = titleArray.filter(el => el !== null)
-    titleArray = titleArray.map(element => ptn(element))
+    // //Step 3
+    // //Create an array of all unique titles, since many titles will be similar except for the scene tags, filter by the first 4 letters
+    // let tableLen = 50;
+    // let titleArray = []
+    // for (let i = 0; i < tableLen; i++) {
+    //     let index = i;
+    //     let torrentTitle = `body > main > div > div > div.featured-list.trending-torrent > div.table-list-wrap > table > tbody > tr:nth-child(${index}) > td.coll-1.name > a`
+    //     titleArray.push(await page.evaluate((sel) => {
+    //         let element = document.querySelector(sel);
+    //         return element ? element.innerText : null;
+    //     }, torrentTitle))
+    // }
+    // titleArray = titleArray.filter(el => el !== null)
+    // titleArray = titleArray.map(element => ptn(element))
 
-    uniqeTitles = [...new Set(titleArray.map(el => (el.title + " trailer")))];
-    //TEST
-    console.log(uniqeTitles)
+    // uniqeTitles = [...new Set(titleArray.map(el => (el.title + " trailer")))];
+    // //TEST
+    // console.log(uniqeTitles)
 
     //Step 4
     //Connect to the youTube API with credentials
+    await page.goto('https://www.youtube.com/');
+    let loginButton = '#buttons > ytd-button-renderer'
+    await page.click(loginButton);
+    await page.screenshot({ path: 'logInScreener.png' })
+    let emailInput = '#view_container > div > div > div.pwWryf.bxPAYd > div > div.WEQkZc > div > form > span > section > div > div > div.d2CFce.cDSmF > div > div.aCsJod.oJeWuf > div > div.Xb9hP > div'
+    await page.click(emailInput);
+    await page.keyboard.type(CREDS.username);
+    let nextButton = '#identifierNext > div > button > div.VfPpkd-RLmnJb'
+    await page.click(nextButton);
+    let passwordInput = '#password > div.aCsJod.oJeWuf > div > div.Xb9hP > input'
+    await page.click(passwordInput);
+    await page.keyboard.type(CREDS.password);
+    let nextloginButton = '#passwordNext > div > button > div.VfPpkd-RLmnJb'
+    await page.click(nextloginButton);
+    //TEST
+    await page.screenshot({ path: 'loggedInScreener.png' });
+
     browser.close();
 
 }
