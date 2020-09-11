@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "google-auth-library": "^6.0.6",
+    "googleapis": "^59.0.0",
     "parse-torrent-name": "^0.5.4",
     "puppeteer": "^5.2.1"
   }
