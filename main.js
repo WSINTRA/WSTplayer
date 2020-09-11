@@ -8,14 +8,15 @@
 //Step 1
 //Create a new puppeteer instance that connects to https://1337x.to/trending/w/movies/
 const puppeteer = require('puppeteer');
+const youTubeSearch = require('./SearchSample');
 //ptn is a torrent name parse from https://github.com/jzjzjzj/parse-torrent-name
 var ptn = require('parse-torrent-name');
 const CREDS = require('./cred');
 
 async function run() {
 
-    const browser = await puppeteer.launch({ headless: false }); // default is true
-    const page = await browser.newPage();
+    // const browser = await puppeteer.launch({ headless: true }); // default is true
+    // const page = await browser.newPage();
 
     // await page.goto('https://1337x.to/trending/w/movies/');
     // //TEST
@@ -47,28 +48,15 @@ async function run() {
 
     //Step 4
     //Connect to the youTube API with credentials
-    await page.goto('https://www.youtube.com/');
-    let loginButton = '#buttons > ytd-button-renderer'
-    await page.click(loginButton);
-    await page.screenshot({ path: 'logInScreener.png' })
-    let emailInput = '#view_container > div > div > div.pwWryf.bxPAYd > div > div.WEQkZc > div > form > span > section > div > div > div.d2CFce.cDSmF > div > div.aCsJod.oJeWuf > div > div.Xb9hP > div'
-    await page.click(emailInput);
-    await page.keyboard.type(CREDS.username);
-    let nextButton = '#identifierNext > div > button > div.VfPpkd-RLmnJb'
-    await page.click(nextButton);
-    let passwordInput = '#password > div.aCsJod.oJeWuf > div > div.Xb9hP > input'
-    await page.click(passwordInput);
-    await page.keyboard.type(CREDS.password);
-    let nextloginButton = '#passwordNext > div > button > div.VfPpkd-RLmnJb'
-    await page.click(nextloginButton);
-    //TEST
-    await page.screenshot({ path: 'loggedInScreener.png' });
 
-    browser.close();
+    let data = await youTubeSearch("Dogs");
+    //TEST
+    console.log(data);
+
 
 }
+run()
 
-run();
 
 
 
