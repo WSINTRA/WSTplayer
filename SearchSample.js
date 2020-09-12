@@ -92,20 +92,22 @@ async function runSample(searchParamArray) {
         //Step 5
         //Create a new playlist using the youtube API
 
-        // try {
-        //     let todaysDate = (new Date()).toLocaleDateString().split("/").join("/")
-        //     let newPlaylist = await service.playlists.insert({
-        //         part: [
-        //             "snippet"
-        //         ],
-        //         snippet: {
-        //             title: `Trending Movies this week ${todaysDate}`
-        //         }
-        //     });
-        //     console.log(newPlaylist)
-        // } catch (err) {
-        //     console.log(err)
-        // }
+        try {
+            let todaysDate = (new Date()).toLocaleDateString().split("/").join("/")
+            let newPlaylist = await service.playlists.insert({
+                part: [
+                    "snippet"
+                ],
+                "resource": {
+                    "snippet": {
+                        "title": `Trending Movies this week ${todaysDate}`
+                    }
+                }
+            });
+            console.log(newPlaylist)
+        } catch (err) {
+            console.log(err)
+        }
 
         //TEST
 
