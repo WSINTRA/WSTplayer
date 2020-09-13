@@ -16,7 +16,7 @@ var fs = require('fs');
 const { google } = require('googleapis');
 const path = require('path');
 var OAuth2 = google.auth.OAuth2;
-var KRACKPOTKIN = "UCZeToi2PcAUJnnbpEuS8HpQ" //My Channel ID
+// var KRACKPOTKIN = "UCZeToi2PcAUJnnbpEuS8HpQ" //My Channel ID
 
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
@@ -35,6 +35,7 @@ async function runSample(searchParamArray) {
         }
         // Authorize a client with the loaded credentials, then call the YouTube API.
         authorize(JSON.parse(content), search);
+
     });
 
     function authorize(credentials, callback) {
@@ -52,6 +53,7 @@ async function runSample(searchParamArray) {
             }
         });
     }
+
     async function search(auth) {
 
         var service = google.youtube('v3');
@@ -80,6 +82,7 @@ async function runSample(searchParamArray) {
             let weeklyTrailers = trailerIDs.map(result => result.id)
             return weeklyTrailers
         });
+
         //test
         // console.log(videoTitles)
 
@@ -106,9 +109,11 @@ async function runSample(searchParamArray) {
         let weeklyPlayListID = await createPlaylistPromise()
             .then(data => {
                 return data.data.id;
-            }).catch(err => { console.log(err) })
+            }).catch(err => { console.log(err); throw err; })
 
-        let listOfPlaylistItems = []
+        let listOfPlaylistItems = [];
+
+        console.log(weeklyPlayListID, "PlayList ID");
 
         for (let i = 0; i < videoTitles.length; i++) {
             listOfPlaylistItems[i] = {
@@ -121,81 +126,88 @@ async function runSample(searchParamArray) {
                 }
             }
         }
-
-        // console.log(weeklyPlayListID, "PlayList ID")
-        // console.log(listOfPlaylistItems[0].video)
-        // console.log(listOfPlaylistItems[1].video)
-
-        // Inserts a new video to a playlist and returns a promise
-        // {   playlistItem: { playlistID: "2039382", video: {videoID:"9289", kind:"Some#Video"}  } }
+        //TEST 
+        console.log(listOfPlaylistItems[0].video)
+        console.log(listOfPlaylistItems[1].playListID)
+            // Inserts a new video to a playlist and returns a promise
+            // {   playlistItem: { playlistID: "2039382", video: {videoID:"9289", kind:"Some#Video"}  } }
         const insertVideoToPlayList = (playListItem) => {
-
             return service.playlistItems.insert({
                 "part": [
                     "id, snippet"
                 ],
                 "resource": {
                     "snippet": {
-                        "playlistId": `${playListItem.playListID}`,
+                        "playlistId": playListItem.playListID,
                         "position": playListItem.position,
                         "resourceId": {
-                            "videoId": `${playListItem.video.videoID}`,
-                            "kind": `${playListItem.video.kind}`
+                            "videoId": playListItem.video.videoID,
+                            "kind": playListItem.video.kind
                         }
                     }
                 }
             }).then(res => {
-
-                return res
-
+                console.log(res)
             }).catch(function(err) {
-                console.log("Some specific work failed", err);
+                console.log("Insert video error", err);
                 throw err; // IMPORTANT! throw unless you intend to suppress the error
             });
         }
 
-        function delayEachInsert(i) {
-            setTimeout(() => {
-                insertVideoToPlayList(listOfPlaylistItems[i])
-            }, 1000);
+        var counter = 0;
+
+        function addVideosToPlaylist() {
+            myLoop(listOfPlaylistItems[0]);
         }
 
-        for (let i = 0; i < listOfPlaylistItems.length; i++) {
-            try {
-                delayEachInsert()
-            } catch (err) {
-                console.log(err)
-            }
+        function myLoop(video_id) {
+            insertVideoToPlayList(video_id);
+            setTimeout(function() {
+                counter++;
+                if (counter < listOfPlaylistItems.length)
+                    myLoop(listOfPlaylistItems[counter]);
+            }, 3000);
         }
+        addVideosToPlaylist()
+
+        //     function delayEachInsert(insert) {
+        //         setTimeout(() => {
+        //             console.log("Inserting ", insert);
+        //             insertVideoToPlayList(insert);
+        //         }, 5000);
+        //     }
+
+        //     for (let i = 0; i < listOfPlaylistItems.length; i++) {
+        //         try {
+        //             delayEachInsert(listOfPlaylistItems[i])
+        //             console.log(listOfPlaylistItems[i], "Sent to insert")
+        //         } catch (err) {
+        //             console.log(err)
+        //         }
+        //     }
+        // }
+
+        // {
+        //     "snippet": {
+        //       "playlistId": "PLVbhqYZqfPNUCPd7XU99ycoomwlDzn__2",
+        //       "resourceId": {
+        //         "videoId": "bVaRXi19wvI",
+        //         "kind": "youtube#video"
+        //       }
+
+        //Step 5
+        //Create a new playlist using the youtube API, and store the playlist ID
 
 
 
+        //TEST
 
+        //Step 6 
+        //For each title in the array list, search the youtube ApI for title with the string trailer added to it
 
-
-
+        //Step 7
+        //Insert each top search result into the newly created playlist
     }
-
-    // {
-    //     "snippet": {
-    //       "playlistId": "PLVbhqYZqfPNUCPd7XU99ycoomwlDzn__2",
-    //       "resourceId": {
-    //         "videoId": "bVaRXi19wvI",
-    //         "kind": "youtube#video"
-    //       }
-
-    //Step 5
-    //Create a new playlist using the youtube API, and store the playlist ID
-
-
-
-    //TEST
-
-    //Step 6 
-    //For each title in the array list, search the youtube ApI for title with the string trailer added to it
-
-    //Step 7
-    //Insert each top search result into the newly created playlist
     return "Done"
 }
 

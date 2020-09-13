@@ -28,7 +28,7 @@ async function run() {
 
     //Step 3
     //Create an array of all unique titles, since many titles will be similar except for the scene tags, filter by the first 4 letters
-    let tableLen = 3; //set this back to 50 when ready
+    let tableLen = 50; //set this back to 50 when ready
     let titleArray = []
     for (let i = 0; i < tableLen; i++) {
         let index = i;
@@ -41,17 +41,20 @@ async function run() {
     titleArray = titleArray.filter(el => el !== null)
     titleArray = titleArray.map(element => ptn(element))
 
+    await browser.close();
+
     uniqeTitles = [...new Set(titleArray.map(el => (el.title + " trailer")))];
+
     //TEST
     // console.log(uniqeTitles)
 
     //Step 4
     //Connect to the youTube API with credentials
 
-    let data = youTubeSearch(uniqeTitles);
+    let data = await youTubeSearch(uniqeTitles);
     //TEST
 
-    return "The End";
+
 
 }
 run()
