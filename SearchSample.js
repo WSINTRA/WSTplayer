@@ -59,8 +59,29 @@ async function runSample(searchParamArray) {
         google.options({ auth });
 
         const searchForVideo = (searchTerm) => { //a function that returns a promise
-            return service.search.list({ part: 'id,snippet', q: `${searchTerm}`, maxResults: 1 })
-        }
+                return service.search.list({ part: 'id,snippet', q: `${searchTerm}`, maxResults: 1 })
+            }
+            //Resolves for each trailer searched
+        const videoTitlePromise = async(item) => {
+                return searchForVideo(item)
+            }
+            //Resolves promise for each trailer searched and returns an array of data
+        const getVideoTitlesID = async() => {
+                return Promise.all(searchParamArray.map(item => videoTitlePromise(item)))
+            }
+            //
+
+        let trailerIDs = []; //
+        //resolve titles and then create an array with just ID and Kind
+        let videoTitles = await getVideoTitlesID().then(data => {
+            trailerIDs = data.map(res => res.data.items[0])
+            return trailerIDs
+        }).then(trailerIDs => {
+            let weeklyTrailers = trailerIDs.map(result => result.id)
+            return weeklyTrailers
+        });
+        //test
+        // console.log(videoTitles)
 
         const createNewPlaylist = () => { //Inserts new playlist and returns a promise
                 let todaysDate = (new Date()).toLocaleDateString().split("/").join("/")
@@ -77,71 +98,80 @@ async function runSample(searchParamArray) {
                 });
 
             }
-            //Inserts a new video to a playlist and returns a promise
-            // {   playlistItem: { playlistID: "2039382", video: [ {videoID:"9289"} , {kind:"Some#Video"} ] } }
-        const insertVideoToPlayList = (playListItem) => {
-                return service.playlistItems.insert({
-                    "part": [
-                        "id, snippet"
-                    ],
-                    "resource": {
-                        "snippet": {
-                            "playlistId": `${playListItem.playListID}`,
-                            "resourceId": {
-                                "videoId": `${playListItem.video.videoId}`,
-                                "kind": `${playListItem.video.kind}`
-                            }
-                        }
-                    }
-                })
-            }
             //Resolves the promise when a playlist is created
         const createPlaylistPromise = async() => {
-                return Promise.resolve(createNewPlaylist());
-            }
-            //Resolves for each trailer searched
-        const videoTitlePromise = async(item) => {
-                return searchForVideo(item)
-            }
-            //Resolves promise for each trailer searched and returns an array of data
-        const getVideoTitlesID = async() => {
-                return Promise.all(searchParamArray.map(item => videoTitlePromise(item)))
-            }
-            //
-        const insertVidToPlaylistPromise = async playListItem => {
-            return insertVideoToPlayList(playListItem)
+            return Promise.resolve(createNewPlaylist());
         }
-
-        let trailerIDs = []; //
-        //resolve titles and then create an array with just ID and Kind
-        let videoTitles = await getVideoTitlesID().then(data => {
-            trailerIDs = data.map(res => res.data.items[0])
-            return trailerIDs
-        }).then(trailerIDs => {
-            let weeklyTrailers = trailerIDs.map(result => result.id)
-            return weeklyTrailers
-        });
-        //test
-        console.log(videoTitles)
 
         let weeklyPlayListID = await createPlaylistPromise()
             .then(data => {
                 return data.data.id;
-            })
+            }).catch(err => { console.log(err) })
+
         let listOfPlaylistItems = []
 
         for (let i = 0; i < videoTitles.length; i++) {
             listOfPlaylistItems[i] = {
-                playListItem: {
-                    "playListID": weeklyPlayListID,
-                    "video": [{
-                        "videoID": videoTitles[i].videoId,
-                        "kind": videoTitles[i].kind
-                    }]
+
+                "playListID": weeklyPlayListID,
+                "position": i,
+                "video": {
+                    "videoID": videoTitles[i].videoId,
+                    "kind": videoTitles[i].kind
                 }
             }
         }
-        console.log(listOfPlaylistItems)
+
+        // console.log(weeklyPlayListID, "PlayList ID")
+        // console.log(listOfPlaylistItems[0].video)
+        // console.log(listOfPlaylistItems[1].video)
+
+        // Inserts a new video to a playlist and returns a promise
+        // {   playlistItem: { playlistID: "2039382", video: {videoID:"9289", kind:"Some#Video"}  } }
+        const insertVideoToPlayList = (playListItem) => {
+
+            return service.playlistItems.insert({
+                "part": [
+                    "id, snippet"
+                ],
+                "resource": {
+                    "snippet": {
+                        "playlistId": `${playListItem.playListID}`,
+                        "position": playListItem.position,
+                        "resourceId": {
+                            "videoId": `${playListItem.video.videoID}`,
+                            "kind": `${playListItem.video.kind}`
+                        }
+                    }
+                }
+            }).then(res => {
+
+                return res
+
+            }).catch(function(err) {
+                console.log("Some specific work failed", err);
+                throw err; // IMPORTANT! throw unless you intend to suppress the error
+            });
+        }
+
+        function delayEachInsert(i) {
+            setTimeout(() => {
+                insertVideoToPlayList(listOfPlaylistItems[i])
+            }, 1000);
+        }
+
+        for (let i = 0; i < listOfPlaylistItems.length; i++) {
+            try {
+                delayEachInsert()
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+
+
+
+
 
 
     }
