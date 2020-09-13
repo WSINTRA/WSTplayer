@@ -85,6 +85,8 @@ async function runSample(searchParamArray) {
 
         //test
         // console.log(videoTitles)
+        //Step 5
+        //Create a new playlist using the youtube API, and store the playlist ID
 
         const createNewPlaylist = () => { //Inserts new playlist and returns a promise
                 let todaysDate = (new Date()).toLocaleDateString().split("/").join("/")
@@ -106,6 +108,8 @@ async function runSample(searchParamArray) {
             return Promise.resolve(createNewPlaylist());
         }
 
+        //Step 6 
+        //For each title in the array list, search the youtube ApI for title with the string trailer added to it
         let weeklyPlayListID = await createPlaylistPromise()
             .then(data => {
                 return data.data.id;
@@ -154,6 +158,7 @@ async function runSample(searchParamArray) {
             });
         }
 
+
         var counter = 0;
 
         function addVideosToPlaylist() {
@@ -170,40 +175,12 @@ async function runSample(searchParamArray) {
         }
         addVideosToPlaylist()
 
-        //     function delayEachInsert(insert) {
-        //         setTimeout(() => {
-        //             console.log("Inserting ", insert);
-        //             insertVideoToPlayList(insert);
-        //         }, 5000);
-        //     }
 
-        //     for (let i = 0; i < listOfPlaylistItems.length; i++) {
-        //         try {
-        //             delayEachInsert(listOfPlaylistItems[i])
-        //             console.log(listOfPlaylistItems[i], "Sent to insert")
-        //         } catch (err) {
-        //             console.log(err)
-        //         }
-        //     }
-        // }
-
-        // {
-        //     "snippet": {
-        //       "playlistId": "PLVbhqYZqfPNUCPd7XU99ycoomwlDzn__2",
-        //       "resourceId": {
-        //         "videoId": "bVaRXi19wvI",
-        //         "kind": "youtube#video"
-        //       }
-
-        //Step 5
-        //Create a new playlist using the youtube API, and store the playlist ID
 
 
 
         //TEST
 
-        //Step 6 
-        //For each title in the array list, search the youtube ApI for title with the string trailer added to it
 
         //Step 7
         //Insert each top search result into the newly created playlist
