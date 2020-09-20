@@ -16,7 +16,6 @@ var fs = require('fs');
 const { google } = require('googleapis');
 const path = require('path');
 var OAuth2 = google.auth.OAuth2;
-// var KRACKPOTKIN = "UCZeToi2PcAUJnnbpEuS8HpQ" //My Channel ID
 
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
@@ -24,8 +23,6 @@ var TOKEN_PATH = TOKEN_DIR + 'youtube-nodejs-quickstart.json';
 // initialize the Youtube API library
 const youtube = google.youtube('v3');
 
-
-// a very simple example of searching for youtube videos
 async function runSample(searchParamArray) {
 
     fs.readFile('client_secret.json', async function processClientSecrets(err, content) {
@@ -69,9 +66,8 @@ async function runSample(searchParamArray) {
             }
             //Resolves promise for each trailer searched and returns an array of data
         const getVideoTitlesID = async() => {
-                return Promise.all(searchParamArray.map(item => videoTitlePromise(item)))
-            }
-            //
+            return Promise.all(searchParamArray.map(item => videoTitlePromise(item)))
+        }
 
         let trailerIDs = []; //
         //resolve titles and then create an array with just ID and Kind
@@ -83,8 +79,6 @@ async function runSample(searchParamArray) {
             return weeklyTrailers
         });
 
-        //test
-        // console.log(videoTitles)
         //Step 5
         //Create a new playlist using the youtube API, and store the playlist ID
 
@@ -137,6 +131,8 @@ async function runSample(searchParamArray) {
         //TEST 
         console.log(listOfPlaylistItems[0].video)
         console.log(listOfPlaylistItems[1].playListID)
+            //Step 7
+            //Insert each top search result into the newly created playlist
             // Inserts a new video to a playlist and returns a promise
             // {   playlistItem: { playlistID: "2039382", video: {videoID:"9289", kind:"Some#Video"}  } }
         const insertVideoToPlayList = (playListItem) => {
@@ -162,7 +158,6 @@ async function runSample(searchParamArray) {
             });
         }
 
-
         var counter = 0;
 
         function addVideosToPlaylist() {
@@ -173,52 +168,18 @@ async function runSample(searchParamArray) {
             insertVideoToPlayList(video_id);
             setTimeout(function() {
                 counter++;
-                if (counter < listOfPlaylistItems.length)
+                if (counter < listOfPlaylistItems.length) {
                     myLoop(listOfPlaylistItems[counter]);
+                }
             }, 3000);
         }
         addVideosToPlaylist()
 
-
-
-
-
-        //TEST
-
-
-        //Step 7
-        //Insert each top search result into the newly created playlist
     }
     return "Done"
 }
-
 
 if (module === require.main) {
     runSample().catch(console.error);
 }
 module.exports = runSample;
-
-
-// var results = await service.search.list({ part: 'id,snippet', q: `${searchTerm}`, maxResults: 1 });
-
-// let videoForPlayList = results.data.items[0].id.videoId
-// let currentPlaylist = await service.playlists.list({
-//     "part": [
-//         "snippet,contentDetails"
-//     ],
-//     "channelId": KRACKPOTKIN,
-//     "maxResults": 25
-// });
-
-// .then(videoListIDs => {
-//     getPlayListID()
-// .then(data => {
-//     let weeklyPlayListID = data.data.id
-//     let weeklyTrailers = videoListIDs.map(result => result.id)
-//     let listOfPlaylistItems = []
-
-//     console.log(listOfPlaylistItems)
-//         // const createNewPlaylistOfTrailers = async() => {
-//         //     return Promise.all(listOfPlaylistItems.map(item => insertVidToPlaylistPromise(item)))
-//         // }
-// })

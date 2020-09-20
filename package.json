@@ -1,17 +1,17 @@
 {
-  "name": "torrentplaylist_project_v1",
-  "version": "1.0.0",
-  "description": "A simple web scraper that connects to youtube API and builds a playlist of trailers based on latest movie torrents",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "google-auth-library": "^6.0.6",
-    "googleapis": "^59.0.0",
-    "parse-torrent-name": "^0.5.4",
-    "puppeteer": "^5.2.1"
-  }
+    "name": "trailer_maker",
+    "version": "1.0.0",
+    "description": "A simple web scraper that connects to youtube API and builds a playlist of trailers based on latest movie torrents",
+    "main": "main.js",
+    "scripts": {
+        "test": "passed eh?"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "google-auth-library": "^6.0.6",
+        "googleapis": "^59.0.0",
+        "parse-torrent-name": "^0.5.4",
+        "puppeteer": "^5.2.1"
+    }
 }
