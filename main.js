@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //Build a webscraper in JS that will run in node
-//After gathering the top 30 unique trneding movie torrents from https://1337x.to/trending/w/movies/
+//After gathering the top 30 unique trending movie torrents from https://1337x.to/trending/w/movies/
 //Connect to the youtube API and build a playlist of trailers for those movies
 //By Will Simpson www.williamrobertsimpson.com Thanks to jzjzjzj for ptn and thanks to google for pupeteer and youtube API
 //////////////////////////////////////////////////////////////////////////////////////////////////
