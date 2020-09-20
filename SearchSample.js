@@ -97,7 +97,11 @@ async function runSample(searchParamArray) {
                     ],
                     "resource": {
                         "snippet": {
+                            "description": `Top movie trailers trending on https://1337x.to/trending/w/movies/ for ${todaysDate}`,
                             "title": `Trending Movies this week ${todaysDate}`
+                        },
+                        "status": {
+                            "privacyStatus": "public"
                         }
                     }
                 });

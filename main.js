@@ -46,7 +46,7 @@ async function run() {
     uniqeTitles = [...new Set(titleArray.map(el => (el.title + " trailer")))];
 
     //TEST
-    // console.log(uniqeTitles)
+    console.log(uniqeTitles)
 
     //Step 4
     //Connect to the youTube API with credentials
