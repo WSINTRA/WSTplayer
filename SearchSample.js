@@ -92,13 +92,13 @@ async function runSample(searchParamArray) {
                 let todaysDate = (new Date()).toLocaleDateString().split("/").join("/")
 
                 return service.playlists.insert({
-                    part: [
-                        "snippet"
+                    "part": [
+                        "snippet, status"
                     ],
                     "resource": {
                         "snippet": {
+                            "title": `Trending Movies this week ${todaysDate}`,
                             "description": `Top movie trailers trending on https://1337x.to/trending/w/movies/ for ${todaysDate}`,
-                            "title": `Trending Movies this week ${todaysDate}`
                         },
                         "status": {
                             "privacyStatus": "public"
