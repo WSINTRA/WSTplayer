@@ -57,23 +57,22 @@ async function runSample(searchParamArray) {
 
         google.options({ auth });
 
-        const searchForVideo = (searchTerm) => { //a function that returns a promise
+        const searchForVideo = (searchTerm) => {
                 return service.search.list({ part: 'id,snippet', q: `${searchTerm}`, maxResults: 1 })
-            }
-            //Resolves for each trailer searched
-        const videoTitlePromise = async(item) => {
-                return searchForVideo(item)
             }
             //Resolves promise for each trailer searched and returns an array of data
         const getVideoTitlesID = async() => {
-            return Promise.all(searchParamArray.map(item => videoTitlePromise(item)))
+            return Promise.all(searchParamArray.map(searchTerm => searchForVideo(searchTerm)))
         }
 
         let trailerIDs = []; //
         //resolve titles and then create an array with just ID and Kind
         let videoTitles = await getVideoTitlesID().then(data => {
+            // console.log('VideoTitleData',data)
+            //Promise.all returns an array of server responses, the info I need is in response.data.items[0] <- The first item in the array is a video ID
             trailerIDs = data.map(res => res.data.items[0])
             return trailerIDs
+            //Trailer ID's becomes an array of video ID's I will need for the playlist
         }).then(trailerIDs => {
             let weeklyTrailers = trailerIDs.map(result => result.id)
             return weeklyTrailers
@@ -101,17 +100,13 @@ async function runSample(searchParamArray) {
                 });
 
             }
-            //Resolves the promise when a playlist is created
-        const createPlaylistPromise = async() => {
-            return Promise.resolve(createNewPlaylist());
-        }
 
         //Step 6 
         //For each title in the array list, search the youtube ApI for title with the string trailer added to it
-        let weeklyPlayListID = await createPlaylistPromise()
+        let weeklyPlayListID = await createNewPlaylist()
             .then(data => {
                 return data.data.id;
-            }).catch(err => { console.log(err); throw err; })
+            }).catch(err => console.log(err))
 
         let listOfPlaylistItems = [];
 
@@ -129,8 +124,8 @@ async function runSample(searchParamArray) {
             }
         }
         //TEST 
-        console.log(listOfPlaylistItems[0].video)
-        console.log(listOfPlaylistItems[1].playListID)
+        // console.log(listOfPlaylistItems[0].video)
+        // console.log(listOfPlaylistItems[1].playListID)
             //Step 7
             //Insert each top search result into the newly created playlist
             // Inserts a new video to a playlist and returns a promise
@@ -150,11 +145,14 @@ async function runSample(searchParamArray) {
                         }
                     }
                 }
-            }).then(res => {
+            }).then(async res => {
+                if(!res.ok){
+                    const err = res
+                    throw err
+                }
                 console.log(res)
-            }).catch(function(err) {
+            }).catch((err)=> {
                 console.log("Insert video error", err);
-                throw err; // IMPORTANT! throw unless you intend to suppress the error
             });
         }
 

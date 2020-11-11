@@ -11,6 +11,7 @@ const puppeteer = require('puppeteer');
 const youTubeSearch = require('./SearchSample');
 //ptn is a torrent name parse from https://github.com/jzjzjzj/parse-torrent-name
 var ptn = require('parse-torrent-name');
+const { youtube } = require('googleapis/build/src/apis/youtube');
 
 async function run() {
 
@@ -28,7 +29,7 @@ async function run() {
 
     //Step 3
     //Create an array of all unique titles, since many titles will be similar except for the scene tags, filter by the first 4 letters
-    let tableLen = 50; //set this back to 50 when ready
+    let tableLen = 3; //set this back to 50 when ready
     let titleArray = []
     for (let i = 0; i < tableLen; i++) {
         let index = i;
@@ -51,8 +52,8 @@ async function run() {
     //Step 4
     //Connect to the youTube API with credentials
 
-    let data = await youTubeSearch(uniqeTitles);
-
+    // let data = await youTubeSearch(uniqeTitles);
+    youTubeSearch(uniqeTitles);
 
 }
 run()
