@@ -29,7 +29,7 @@ async function run() {
 
     //Step 3
     //Create an array of all unique titles, since many titles will be similar except for the scene tags, filter by the first 4 letters
-    let tableLen = 3; //set this back to 50 when ready
+    let tableLen = 50; //set this back to 50 when ready
     let titleArray = []
     for (let i = 0; i < tableLen; i++) {
         let index = i;

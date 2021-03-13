@@ -109,20 +109,19 @@ async function runSample(searchParamArray) {
             }).catch(err => console.log(err))
 
         let listOfPlaylistItems = [];
-
         console.log(weeklyPlayListID, "PlayList ID");
+        videoTitles.map((videoTitle,i)=> listOfPlaylistItems.push( { "playListID": weeklyPlayListID,"position": i, "video": {"videoID": videoTitle.videoId,"kind": videoTitle.kind} } ) )
+        // for (let i = 0; i < videoTitles.length; i++) {
+        //     listOfPlaylistItems[i] = {
 
-        for (let i = 0; i < videoTitles.length; i++) {
-            listOfPlaylistItems[i] = {
-
-                "playListID": weeklyPlayListID,
-                "position": i,
-                "video": {
-                    "videoID": videoTitles[i].videoId,
-                    "kind": videoTitles[i].kind
-                }
-            }
-        }
+        //         "playListID": weeklyPlayListID,
+        //         "position": i,
+        //         "video": {
+        //             "videoID": videoTitles[i].videoId,
+        //             "kind": videoTitles[i].kind
+        //         }
+        //     }
+        // }
         //TEST 
         // console.log(listOfPlaylistItems[0].video)
         // console.log(listOfPlaylistItems[1].playListID)
@@ -145,33 +144,32 @@ async function runSample(searchParamArray) {
                         }
                     }
                 }
-            }).then(async res => {
-                if(!res.ok){
-                    const err = res
-                    throw err
-                }
-                console.log(res)
-            }).catch((err)=> {
-                console.log("Insert video error", err);
-            });
+            })
         }
 
-        var counter = 0;
+        const getData = async () => {
+            return Promise.all(listOfPlaylistItems.map(item => insertVideoToPlayList(item)))
+          }
+          
+          getData().then(data => {
+            console.log(data)
+          })
+        // var counter = 0;
 
-        function addVideosToPlaylist() {
-            myLoop(listOfPlaylistItems[0]);
-        }
+        // function addVideosToPlaylist() {
+        //     myLoop(listOfPlaylistItems[0]);
+        // }
 
-        function myLoop(video_id) {
-            insertVideoToPlayList(video_id);
-            setTimeout(function() {
-                counter++;
-                if (counter < listOfPlaylistItems.length) {
-                    myLoop(listOfPlaylistItems[counter]);
-                }
-            }, 3000);
-        }
-        addVideosToPlaylist()
+        // function myLoop(video_id) {
+        //     insertVideoToPlayList(video_id);
+        //     setTimeout(function() {
+        //         counter++;
+        //         if (counter < listOfPlaylistItems.length) {
+        //             myLoop(listOfPlaylistItems[counter]);
+        //         }
+        //     }, 3000);
+        // }
+        // addVideosToPlaylist()
 
     }
     return "Done"
